@@ -2,3 +2,7 @@ __pycache__/
 images/
 presentations/
 config.py
+
+config_ready_names.txt
+
+orders.txt
