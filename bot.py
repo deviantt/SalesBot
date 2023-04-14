@@ -44,6 +44,13 @@ def find_key_by_name(value) -> str:
             if temp_ready_name_list[1] == value:
                 return temp_ready_name_list[0]
             
+def find_name_by_key(key) -> str:
+    with open('config_ready_names.txt', 'r', encoding='utf-8') as file:
+        for line in file:
+            temp_ready_name_list = line.strip().split("|")
+            if temp_ready_name_list[0] == key:
+                return temp_ready_name_list[1]
+            
 def read_config(key) -> list[str]:
     with open('config_ready_names.txt', 'r', encoding='utf-8') as file:
         for line in file:
@@ -285,7 +292,7 @@ def purchase_callback(m, key):
             m.chat.id,
             title=temp_list[1],
             description=temp_list[1],
-            invoice_payload=key,
+            invoice_payload=f'{key}_{m.chat.id}',
             provider_token=PROVIDER_PAYMENT_TOKEN,
             currency="rub",
             prices=[types.LabeledPrice(label=temp_list[1], amount=int(temp_list[3]))],
@@ -302,9 +309,10 @@ def handle_pre_checkout_query(pre_checkout_query: types.PreCheckoutQuery):
 
 @bot.message_handler(content_types=['successful_payment'])
 def handle_payment(m: types.Message):
-    key = m.successful_payment.invoice_payload
+    key = m.successful_payment.invoice_payload[0]
+    title = f'{find_name_by_key(key)}.pptx'
     bot.send_message(m.chat.id, "Оплата прошла успешно, спасибо за покупку!")
-    bot.send_document(m.chat.id, document=open(f"presentations\\{key}.pptx", 'rb'))
+    bot.send_document(m.chat.id, document=open(f"presentations\\{key}.pptx", 'rb'), visible_file_name=title)
     redirect(m)
 #endregion
 
