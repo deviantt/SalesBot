@@ -6,3 +6,5 @@ config.py
 config_ready_names.txt
 
 orders.txt
+
+users_chat_id.txt
